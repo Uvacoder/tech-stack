@@ -1,3 +1,4 @@
+import RepoCard from '../components/Repositories/RepoCard';
 import { useAppSelector } from '../store';
 
 const StackPage: React.FC = () => {
@@ -6,7 +7,7 @@ const StackPage: React.FC = () => {
   return (
     <div>
       {stack.map((item) => (
-        <div>{item.name}</div>
+        <RepoCard key={item.id} repo={item} />
       ))}
     </div>
   );

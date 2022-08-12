@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { IRepo } from '../store/github/github.types';
 import { useGetReposByNameQuery } from '../store/github/github.api';
 import useDebounce from '../hooks/useDebounce';
-import { useAppDispatch } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import { stackActions } from '../components/Stack/stackSlice';
 
 export default function LandingPage() {
@@ -15,10 +15,6 @@ export default function LandingPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
-
-  useEffect(() => {
-    console.log(debouncedValue);
-  }, [debouncedValue]);
 
   return (
     <div className="w-[50%] max-w-[50%] mx-auto">
@@ -56,18 +52,21 @@ const ReposList: React.FC<{ repos: IRepo[] }> = ({ repos }) => {
   return (
     <>
       {repos.map((repo) => (
-        <RepoCard key={repo.id} repo={repo} isSelected={false} />
+        <RepoCard key={repo.id} repo={repo} />
       ))}
     </>
   );
 };
 
-const RepoCard: React.FC<{ repo: IRepo; isSelected: boolean }> = ({
-  repo,
-  isSelected,
-}) => {
+const RepoCard: React.FC<{ repo: IRepo }> = ({ repo }) => {
   const dispatch = useAppDispatch();
-  const { addToStack } = stackActions;
+  const { addToStack, removeFromStack } = stackActions;
+  const stack = useAppSelector((state) => state.stackSlice.stackList);
+  const [isSelected, setIsSelected] = useState(false);
+
+  useEffect(() => {
+    if (stack.find((item) => item.id === repo.id)) setIsSelected(true);
+  }, [stack]);
 
   return (
     <li className="flex gap-4 justify-between items-center border-b py-3 px-4 cursor-pointer hover:bg-gray-100 rounded-lg transition">
@@ -82,14 +81,21 @@ const RepoCard: React.FC<{ repo: IRepo; isSelected: boolean }> = ({
           <div>🔀{repo.forks_count}</div>
         </div>
       </div>
-      {!isSelected && (
-        <button
-          onClick={() => dispatch(addToStack(repo))}
-          className="h-fit basis-1/5 mt-2 border rounded-lg px-4 py-3 bg-cyan-400 text-stone-900 transition hover:bg-cyan-300"
-        >
-          Add to stack
-        </button>
-      )}
+      <button
+        onClick={() => {
+          if (!isSelected) return dispatch(addToStack(repo));
+          dispatch(removeFromStack(repo));
+          setIsSelected(false);
+        }}
+        className={`h-fit basis-1/5 mt-2 border rounded-lg px-4 py-3 
+        bg-${
+          !isSelected ? 'cyan' : 'red'
+        }-400 text-stone-900 transition hover:bg-${
+          !isSelected ? 'cyan' : 'red'
+        }-300`}
+      >
+        {!isSelected ? 'Add to stack' : 'Remove from stack'}
+      </button>
     </li>
   );
 };

@@ -20,7 +20,7 @@ export const stackSlice = createSlice({
     },
     removeFromStack: (state, action: PayloadAction<IRepo>) => {
       state.stackList = state.stackList.filter(
-        (item) => item !== action.payload
+        (item) => item.id !== action.payload.id
       );
     },
     clearStack: (state) => {
