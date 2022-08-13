@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { IRepo } from '../store/github/github.types';
 import { useGetReposByNameQuery } from '../store/github/github.api';
 import useDebounce from '../hooks/useDebounce';
-import { useAppDispatch, useAppSelector } from '../store';
-import { stackActions } from '../components/Stack/stackSlice';
 import RepoCard from '../components/Repositories/RepoCard';
+import Stack from '../components/Stack/Stack';
 
 export default function LandingPage() {
   const [search, setSearch] = useState('');
@@ -18,16 +17,20 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="w-[50%] max-w-[50%] mx-auto">
-      <h1 className="text-2xl mb-2">Select library to add to your stack</h1>
-      <SearchBar search={search} handleInputChange={handleInputChange} />
-      <ul className="flex flex-col max-w-full">
-        {isLoading && <div>Loading data...</div>}
-        {isError && <div className="text-red-500">Something went wrong</div>}
-        {data && search.length >= 3 && !isLoading ? (
-          <ReposList repos={data.items} />
-        ) : null}
-      </ul>
+    <div className="w-full flex flex-col md:flex-row md:gap-10">
+      <div className="md:basis-3/12">
+        <Stack />
+      </div>
+      <div className="md:basis-9/12 md:mx-auto">
+        <SearchBar search={search} handleInputChange={handleInputChange} />
+        <ul className="flex flex-col max-w-full gap-2 mb-4">
+          {isLoading && <div>Loading data...</div>}
+          {isError && <div className="text-red-500">Something went wrong</div>}
+          {data && search.length >= 3 && !isLoading ? (
+            <ReposList repos={data.items} />
+          ) : null}
+        </ul>
+      </div>
     </div>
   );
 }

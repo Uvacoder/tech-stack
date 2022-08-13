@@ -7,7 +7,7 @@ const StackPage: React.FC = () => {
   const [parent] = useAutoAnimate<HTMLUListElement>();
 
   return (
-    <ul ref={parent}>
+    <ul ref={parent} className="flex flex-col gap-2">
       {stack.map((item) => (
         <RepoCard key={item.id} repo={item} />
       ))}

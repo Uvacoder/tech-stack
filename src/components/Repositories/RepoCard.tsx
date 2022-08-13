@@ -10,7 +10,8 @@ const RepoCard: React.FC<{ repo: IRepo }> = ({ repo }) => {
   const [isSelected, setIsSelected] = useState(false);
 
   useEffect(() => {
-    if (stack.find((item) => item.id === repo.id)) setIsSelected(true);
+    if (stack.find((item) => item.id === repo.id)) return setIsSelected(true);
+    setIsSelected(false);
   }, [stack]);
 
   return (
@@ -20,23 +21,21 @@ const RepoCard: React.FC<{ repo: IRepo }> = ({ repo }) => {
         dispatch(removeFromStack(repo));
         setIsSelected(false);
       }}
-      className="flex gap-4 justify-between items-center border-b py-3 px-4 cursor-pointer hover:bg-gray-100 rounded-lg transition"
+      className={`flex flex-col border-b 
+      py-3 px-4 cursor-pointer ${isSelected ? 'bg-green-300' : ''} hover:${
+        isSelected ? 'bg-green-200' : 'bg-gray-100'
+      } rounded-lg transition`}
     >
-      <input
-        type="checkbox"
-        checked={isSelected}
-        className="border rounded-lg px-4 py-3"
-      />
-      <div className="flex flex-col w-full">
-        <div className="flex text-lg">
-          <div>{`📘${repo.owner.login}/`}</div>
-          <div className="font-bold">{repo.name}</div>
+      <div className="flex text-lg">
+        <div className="inline">
+          {`📘${repo.owner.login}/`}
+          <b>{repo.name}</b>
         </div>
-        <div>{repo.description}</div>
-        <div className="flex text-sm mt-2 font-mono gap-4">
-          <div>⭐{repo.stargazers_count}</div>
-          <div>🔀{repo.forks_count}</div>
-        </div>
+      </div>
+      <div>{repo.description}</div>
+      <div className="flex text-sm mt-2 font-mono gap-4">
+        <div>⭐{repo.stargazers_count}</div>
+        <div>🔀{repo.forks_count}</div>
       </div>
     </li>
   );
