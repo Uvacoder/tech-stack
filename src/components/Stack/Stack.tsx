@@ -18,7 +18,7 @@ const Stack: React.FC = () => {
           <div
             className="w-full cursor-pointer"
             key={item.id}
-            onClick={() => dispatch(removeFromStack(item))}
+            onClick={() => dispatch(removeFromStack(item.id))}
           >
             <span className="whitespace-nowrap">{`📘${item.owner.login}/`}</span>
             <b>{item.name}</b>

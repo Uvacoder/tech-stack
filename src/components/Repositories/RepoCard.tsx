@@ -18,7 +18,7 @@ const RepoCard: React.FC<{ repo: IRepo }> = ({ repo }) => {
     <li
       onClick={() => {
         if (!isSelected) return dispatch(addToStack(repo));
-        dispatch(removeFromStack(repo));
+        dispatch(removeFromStack(repo.id));
         setIsSelected(false);
       }}
       className={`flex flex-col border-b 
