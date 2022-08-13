@@ -27,10 +27,17 @@ const RepoCard: React.FC<{ repo: IRepo }> = ({ repo }) => {
       } rounded-lg transition`}
     >
       <div className="flex text-lg">
-        <div className="inline">
-          {`📘${repo.owner.login}/`}
-          <b>{repo.name}</b>
-        </div>
+        <a
+          onClick={(e) => e.stopPropagation()}
+          href={repo.html_url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <div className="border-b-blue-400 hover:border-b inline">
+            {`📘${repo.owner.login}/`}
+            <b>{repo.name}</b>
+          </div>
+        </a>
       </div>
       <div>{repo.description}</div>
       <div className="flex text-sm mt-2 font-mono gap-4">
