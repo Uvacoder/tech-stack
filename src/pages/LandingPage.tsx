@@ -1,16 +1,21 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { IRepo } from '../store/github/github.types';
 import { useGetReposByNameQuery } from '../store/github/github.api';
 import useDebounce from '../hooks/useDebounce';
 import RepoCard from '../components/Repositories/RepoCard';
 import Stack from '../components/Stack/Stack';
+import { useAutoAnimate } from '@formkit/auto-animate/react';
 
 export default function LandingPage() {
+  const [parent] = useAutoAnimate<HTMLUListElement>();
   const [search, setSearch] = useState('');
   const debouncedValue = useDebounce(search);
-  const { data, isLoading, isError } = useGetReposByNameQuery(debouncedValue, {
-    skip: debouncedValue.length < 3,
-  });
+  const { data, isLoading, isError, isFetching } = useGetReposByNameQuery(
+    debouncedValue,
+    {
+      skip: debouncedValue.length < 3,
+    }
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -23,10 +28,10 @@ export default function LandingPage() {
       </div>
       <div className="md:basis-9/12 md:mx-auto">
         <SearchBar search={search} handleInputChange={handleInputChange} />
-        <ul className="flex flex-col max-w-full gap-2 mb-4">
-          {isLoading && <div>Loading data...</div>}
+        <ul ref={parent} className="flex flex-col max-w-full gap-2 mb-4">
+          {(isLoading || isFetching) && <div>Loading data...</div>}
           {isError && <div className="text-red-500">Something went wrong</div>}
-          {data && search.length >= 3 && !isLoading ? (
+          {data && search.length >= 3 && !isLoading && !isFetching ? (
             <ReposList repos={data.items} />
           ) : null}
         </ul>
