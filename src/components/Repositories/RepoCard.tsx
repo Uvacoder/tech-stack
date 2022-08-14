@@ -1,26 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../store';
 import { IRepo } from '../../store/github/github.types';
-import { stackActions } from '../Stack/stackSlice';
 
-const RepoCard: React.FC<{ repo: IRepo }> = ({ repo }) => {
-  const dispatch = useAppDispatch();
-  const { addToStack, removeFromStack } = stackActions;
-  const stack = useAppSelector((state) => state.stackSlice.stackList);
-  const [isSelected, setIsSelected] = useState(false);
-
-  useEffect(() => {
-    if (stack.find((item) => item.id === repo.id)) return setIsSelected(true);
-    setIsSelected(false);
-  }, [stack]);
-
+const RepoCard: React.FC<{
+  repo: IRepo;
+  isSelected: boolean;
+  onRepoClick: (repo: IRepo) => void;
+}> = ({ repo, isSelected = false, onRepoClick }) => {
   return (
     <li
-      onClick={() => {
-        if (!isSelected) return dispatch(addToStack(repo));
-        dispatch(removeFromStack(repo.id));
-        setIsSelected(false);
-      }}
+      onClick={() => onRepoClick(repo)}
       className={`flex flex-col border-b 
       py-3 px-4 cursor-pointer ${isSelected ? 'bg-green-300' : ''} hover:${
         isSelected ? 'bg-green-200' : 'bg-gray-100'

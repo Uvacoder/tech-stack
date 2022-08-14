@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { IRepo } from '../store/github/github.types';
 import { useGetReposByNameQuery } from '../store/github/github.api';
 import useDebounce from '../hooks/useDebounce';
 import RepoCard from '../components/Repositories/RepoCard';
-import Stack from '../components/Stack/Stack';
+import Sidebar from '../components/Stack/StackSidebar';
 import { useAutoAnimate } from '@formkit/auto-animate/react';
+import useRepoList from '../hooks/useRepoList';
 
 export default function LandingPage() {
   const [parent] = useAutoAnimate<HTMLUListElement>();
@@ -24,7 +25,7 @@ export default function LandingPage() {
   return (
     <div className="w-full flex flex-col md:flex-row md:gap-10">
       <div className="md:basis-3/12">
-        <Stack />
+        <Sidebar />
       </div>
       <div className="md:basis-9/12 md:mx-auto">
         <SearchBar search={search} handleInputChange={handleInputChange} />
@@ -58,11 +59,20 @@ const SearchBar: React.FC<{
 };
 
 const ReposList: React.FC<{ repos: IRepo[] }> = ({ repos }) => {
+  const { onRepoClick, isSelected } = useRepoList();
+
   return (
     <>
-      {repos.map((repo) => (
-        <RepoCard key={repo.id} repo={repo} />
-      ))}
+      {repos.map((repo) => {
+        return (
+          <RepoCard
+            key={repo.id}
+            repo={repo}
+            isSelected={isSelected(repo.id)}
+            onRepoClick={() => onRepoClick(repo)}
+          />
+        );
+      })}
     </>
   );
 };
